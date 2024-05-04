@@ -1,6 +1,8 @@
 # crush.ai (no i don't own the domain)
 just a side project i made for a friend. this project is basically a socket io based chat client and responses are handled by character.ai's characters which is made possible by [this library](https://github.com/kramcat/CharacterAI). if you want to self host skip to the next section.
 
+### live demo: https://crush-ai.onrender.com/chat
+
 # self host guide
 1. login to character.ai , open a chat of the desired character the url will look like this -> https://character.ai/chat/{a_long_string_here} that long string is your char id, go ahead and paste it in the .env file
 
