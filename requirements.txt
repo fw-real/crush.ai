@@ -1,0 +1,6 @@
+flask-socketio
+requests
+characterai==0.8.0
+typing_extensions
+websockets
+python-dotenv
