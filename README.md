@@ -12,3 +12,7 @@ just a side project i made for a friend. this project is basically a socket io b
 3. run the program (if you want to adjust the server ip and port, you are free to do so by editing main.py's last line, for the port just add the port variable and assign it the port you need in the socketio.run() function as i have not by default passed it.)
 
 4. yea that's all
+
+
+# bugs and suggestions
+if you got some to share yk what to do drop an issue/pr or hit me up on discord
