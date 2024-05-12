@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="h-100">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;900&display=swap" rel="stylesheet"> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js" integrity="sha384-tj2WlIjHYEyQmjJpHzljbFeuNlzjawRI4FXnglkrsFi+MAZZeNtK7Ou6vSUaz8GI" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js" integrity="sha384-wciR07FV6RBcI+YEVsZy/bInxpyn0uefUp6Yi9R5r46Qv/yk/osR5nzY31koh9Uq" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.1.3/marked.min.js"></script> <!-- Include marked.js library -->
+  <title>Flask-Toastr Example App</title>
+    {{ toastr.include_jquery() }}
+    {{ toastr.include_toastr_css() }}
+    {{ toastr.message() }}
+  <style type="text/css" media= "screen">
+    body {
+      background-color: #f7f7f7;
+      opacity: 1;
+      background-image: linear-gradient(30deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(150deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(30deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(150deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(60deg, #ececec77 25%, transparent 25.5%, transparent 75%, #ececec77 75%, #ececec77), linear-gradient(60deg, #ececec77 25%, transparent 25.5%, transparent 75%, #ececec77 75%, #ececec77);
+      background-size: 22px 39px;
+      background-position: 0 0, 0 0, 11px 19px, 11px 19px, 0 0, 11px 19px;
+      touch-action: none;
+    }
+
+    main,
+    footer {
+      opacity: 1;
+    }
+
+    #chatBoard {
+      height: calc(100vh - 190px); /* Adjust the height of the chat log area */
+      overflow-y: auto;
+      text-align: left;
+      margin-bottom: 0; /* Remove the bottom margin */
+    }
+    #chatBoard::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+  }
+
+  /* Track */
+    #chatBoard::-webkit-scrollbar-track {
+      background: transparent; /* Color of the track */
+    }
+
+    /* Handle */
+    #chatBoard::-webkit-scrollbar-thumb {
+      background: #888; /* Color of the scrollbar handle */
+      border-radius: 10px; /* Roundness of the scrollbar handle */
+    }
+
+    /* Handle on hover */
+    #chatBoard::-webkit-scrollbar-thumb:hover {
+      background: #555; /* Color of the scrollbar handle on hover */
+    }
+
+    input#msg:focus {
+      outline: none !important;
+      box-shadow: none;
+    }
+
+    #chatBoard .msgRow {
+      background: #fff;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      padding: 0.4rem 1rem 1rem 0.4rem;
+      margin: 0 0 0.4rem 0;
+      overflow-wrap: break-word;
+      position: relative;
+    }
+
+    #chatBoard .msgRow .ts {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-size: 0.7rem;
+      color: #aaa;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-image: linear-gradient(30deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(150deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(30deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(150deg, #ececec 12%, transparent 12.5%, transparent 87%, #ececec 87.5%, #ececec), linear-gradient(60deg, #ececec77 25%, transparent 25.5%, transparent 75%, #ececec77 75%, #ececec77), linear-gradient(60deg, #ececec77 25%, transparent 25.5%, transparent 75%, #ececec77 75%, #ececec77);
+      background-size: 22px 39px;
+      background-position: 0 0, 0 0, 11px 19px, 11px 19px, 0 0, 11px 19px;
+    }
+
+    .username {
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-right: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    /* round the other side of the chatbox */
+
+    .user {
+      color: green;
+      background-color: #d4f4d4;
+      padding: 2px 5px;
+    }
+
+    .touka {
+      color: blue;
+      background-color: #d4eaf4;
+      padding: 2px 5px;
+    }
+
+    .username:hover {
+      text-decoration: underline;
+    }
+    input.form-control {
+      border-radius: 20px 0 0 20px; /* Adjust the value as needed */
+    }
+
+    .container-md {
+      margin-bottom: 0; /* Remove the bottom margin */
+    }
+
+    .btn {
+      display: flex;
+      justify-content: center;
+      align-items: center; /* Add this line to center the icon vertically */
+    }
+
+    #sendButton {
+      background-color: blue;
+      border: none;
+      border-radius: 0 20px 20px 0;
+      color: white;
+      width: 40px;
+      height: 40px;
+    }
+    #greenButton {
+      background-color: green;
+      border: none;
+      border-radius: 20px 0 0 20px;
+      color: white;
+      width: 40px;
+      height: 40px;
+    }
+    #greenButton:hover {
+      background-color: #28a745;
+    }
+
+
+    .input-group.form-control {
+      border-radius: 0 20px 20px 0; /* Adjust the value as needed */
+    }
+
+    #sendButton:hover {
+      background-color: #007bff;
+    }
+    .btn-uniform-height {
+      padding: 0.375rem 0.75rem; /* Adjust the padding to match the blue button */
+    }
+    /* make the character button more rounded */
+    #characterButton {
+      border-radius: 10px;
+      /* space it out a bit from the github button */
+      margin-right: 10px;
+      /* center the text horizontally and vertically */
+
+    }
+
+    /* make the github button more rounded */
+    .btn-primary {
+      border-radius: 10px;
+      /* make it the same size as the character button */
+      height: 40px;
+      /* even horizontal same space as the character button */
+      margin-right: 10px;
+    }
+
+  </style>
+</head>
+<body class="d-flex flex-column h-100">
+
+  <header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+      <div class="container-md">
+        <a class="navbar-brand" href="#">Crush.AI</a>
+        <div class="ms-auto d-flex justify-content-end">
+          <div class="me-2">
+            <a href="https://github.com/fw-real" target="_blank" class="btn btn-primary position-relative">Github</a>
+            </button>
+          </div>
+          <button id="characterButton" class="btn btn-danger position-relative btn-uniform-height" style="height: 40px; line-height: 40px;">Logout</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  {{ toastr.include_toastr_js() }}
+  
+
+<main class="flex-shrink-0 mt-5">
+  <div class="container-md text-center mt-3">        
+    <div id="chatBoard" class="p-3"></div>   
+  </div>
+</main>
+<script src="https://kit.fontawesome.com/080cec03e0.js" crossorigin="anonymous"></script>
+<footer class="footer mt-auto py-0 bg-light">
+  <div class="container">
+    <form action="" name="f1" id="f1">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="input-group mt-3 mb-3">
+            <button id="greenButton" class="btn"><i class="fa-solid fa-plus"></i></button>
+            <input  type="text" class="form-control" placeholder="Message Touka Kirishima..." aria-label="Message Touka Kirishima..." aria-describedby="basic-addon2" id="msg" required>
+            <button id="sendButton" class="btn"><i class="fa-solid fa-share"></i></button>
+          </div>
+          <p class="text-center text-muted">Original design by <a href="https://github.com/lamorbidamacchina/easychat" target="_blank">lamorbidamacchina</a></p>
+        </div>
+      </div>
+    </form>
+  </div>
+</footer>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js" integrity="sha384-tj2WlIjHYEyQmjJpHzljbFeuNlzjawRI4FXnglkrsFi+MAZZeNtK7Ou6vSUaz8GI" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js" integrity="sha384-wciR07FV6RBcI+YEVsZy/bInxpyn0uefUp6Yi9R5r46Qv/yk/osR5nzY31koh9Uq" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.1.3/marked.min.js"></script> <!-- Include marked.js library -->
+<script>
+  const socket = io(); // Initialize Socket.IO
+  
+  // Function to handle receiving messages from the server
+  socket.on('response', function(response) {
+    logMessage(response, 'response');
+  });
+
+  socket.on('logout_notification', function(message) {
+    // Display a notification using a library like Toastr
+    toastr.success(message, 'Success', {
+      timeOut: 5000, // 5 seconds
+      progressBar: true,
+      positionClass: 'toast-top-left'
+    });
+    // redirect to /logout after 5 seconds
+    setTimeout(function() {
+      window.location.href = '/logout';
+    }, 5000);
+    
+  });
+
+  socket.on('newchat_notification', function(message) {
+    // Display a notification using a library like Toastr
+    toastr.success(message, 'Success', {
+      timeOut: 5000, // 5 seconds
+      progressBar: true,
+      positionClass: 'toast-top-left'
+    });
+    // redirect to /logout after 5 seconds
+    setTimeout(function() {
+      window.location.href = '/chat';
+    }, 5000);
+    
+  });
+
+  document.getElementById('characterButton').addEventListener('click', function(event) {
+    event.preventDefault();
+    sendMessage("logoutweeitherrealingornothinglilbro9090$");
+  });
+
+  // Function to send message
+  function sendMessage(msg) {
+  const messageInput = document.getElementById('msg');
+  let message = msg || messageInput.value.trim(); // Trim to remove leading and trailing spaces
+  // if msg exists and is logout, emit logout but dont log it 
+  if (message === '') {
+    alert("Please enter a message.");
+    return; // Exit if the message is empty
+  }
+  // Strip Markdown syntax from the message
+  message = stripMarkdown(message);
+  socket.emit('message', message);
+  if (message == 'logoutweeitherrealingornothinglilbro9090$'|| message == 'newchatweeitherrealingornothinglilbro9090$'){
+    return;
+  } else{
+  logMessage(message, 'sent');
+  messageInput.value = '';
+  }
+}
+
+  // Function to log messages
+  function logMessage(message, type) {
+    const chatBoard = document.getElementById('chatBoard');
+    const messageDiv = document.createElement('div');
+    const title = type === 'response' ? 'Touka' : 'User';
+    const timeStamp = new Date().toLocaleTimeString(); // Get the current timestamp
+    const colorClass = type === 'response' ? 'touka' : 'user'; // Determine color class
+    messageDiv.classList.add('msgRow', type === 'response' ? 'response' : 'sent');
+    if (type === 'response') {
+      messageDiv.innerHTML = `<div class="username ${colorClass}">${title}</div><div class="message">${marked(message)}</div><div class="ts">${timeStamp}</div>`; // Convert Touka's response from Markdown to HTML
+    } else {
+      messageDiv.innerHTML = `<div class="username ${colorClass}">${title}</div><div class="message">${message}</div><div class="ts">${timeStamp}</div>`;
+    }
+    chatBoard.appendChild(messageDiv);
+    chatBoard.scrollTop = chatBoard.scrollHeight; // Scroll to bottom
+  }
+  // replicate the logMessage function but add params message, author, and timestamp
+  function oldMsgslog(message, author, timestamp) {
+    const chatBoard = document.getElementById('chatBoard');
+    const messageDiv = document.createElement('div');
+    const title = author;
+    const timeStamp = timestamp || new Date().toLocaleTimeString(); // Get the current timestamp
+    const colorClass = author === 'Touka' ? 'touka' : 'user'; // Determine color class
+    messageDiv.classList.add('msgRow', author === 'Touka' ? 'response' : 'sent');
+    if (author === 'Touka') {
+      messageDiv.innerHTML = `<div class="username ${colorClass}">${title}</div><div class="message">${marked(message)}</div><div class="ts">${timeStamp}</div>`; // Convert Touka's response from Markdown to HTML
+    } else {
+      messageDiv.innerHTML = `<div class="username ${colorClass}">${title}</div><div class="message">${message}</div><div class="ts">${timeStamp}</div>`;
+    }
+    chatBoard.appendChild(messageDiv);
+    chatBoard.scrollTop = chatBoard.scrollHeight; // Scroll to bottom
+  }
+  // get the messages variable from the server
+  socket.on('messages', function(messages) {
+    // loop through the messages and log them
+    messages.forEach(function(message) {
+      oldMsgslog(message.message, message.author, message.timestamp);
+    });
+  });
+  
+  // Function to convert Markdown to HTML
+  function stripMarkdown(markdown) {
+    // Remove Markdown syntax
+    return markdown
+      .replace(/\*\*|\*/g, '') // Remove asterisks for bold and italic
+      .replace(/__|_/g, '') // Remove underscores for bold and italic
+      .replace(/`/g, ''); // Remove backticks for code
+  }
+
+  // Attach event listener to the send button
+  document.getElementById('sendButton').addEventListener('click', function(event) {
+    event.preventDefault();
+    sendMessage();
+  });
+  // Attach event listener to the green button
+  document.getElementById('greenButton').addEventListener('click', function(event) {
+    event.preventDefault();
+    // send a message to the server
+    sendMessage("newchatweeitherrealingornothinglilbro9090$");
+  });
+
+  // Pressing Enter in the input field sends the message
+  document.getElementById('msg').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+  // emit logout if the logout button is clicked
+  
+</script>
+
+</body>
+</html>

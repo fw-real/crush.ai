@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Briem+Hand&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <title>Crush.AI - Login</title>
+    {{ toastr.include_jquery() }}
+    {{ toastr.include_toastr_css() }}
+    {{ toastr.message() }}
+    <style>
+        
+        /* Add some basic styling to make it look fancy */
+        body {
+            font-family: Arial, sans-serif;
+            background: rgb(131,58,180);
+            background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(200,76,76,1) 50%, rgba(252,176,69,1) 100%);
+        }
+        .container {
+            max-width: 400px;
+            margin: auto; /* Center horizontally */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: transparent;
+            border-radius: 20px;
+        }
+        /* center the container horizontally and vertically */
+        
+       .header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-family: 'Poetsen One', cursive;
+        }
+       .form-group {
+            margin-bottom: 20px;
+        }
+       .form-control {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+        }
+       .btn {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Briem Hand', cursive;
+        }
+       .btn:hover {
+            background-color: #3e8e41;
+        }
+        #login-form label {
+            font-family: 'Nunito', sans-serif;
+        }
+        #registerlink {
+            float: left;
+            /* gap it a bit from the password input */
+            margin-top: 10px;
+            font-size: 14px;
+            font-family: 'Nunito', sans-serif;
+        }
+        #submit-btn {
+            margin: 40px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <p></p>
+    <div class="container">
+        <img src="https://res.cloudinary.com/de87yggc7/image/upload/v1715297145/epdl5yhozepi2xzlhuo9.png" alt="Crush.AI" style="display: block; margin: auto; margin-top: 0px; width: 300px;">
+        <div class="header" style="margin-top: -20px;">
+            Welcome Back!
+        </div>
+        {{ toastr.include_toastr_js() }}
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" class="form-control" required>
+                    <a id="registerlink" href="/register">Create Account</a>
+            </div>
+            <button class="btn" id="submit-btn">Login</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#submit-btn').on('click', function(event) {
+                event.preventDefault();
+                var username = $('#username').val();
+                var password = $('#password').val();
+                // check if username or password are empty
+                if (!username || !password) {
+                    toastr.error('Kindly enter your credentials!', 'Error', {
+                        timeOut: 5000, // 5 seconds
+                        progressBar: true,
+                        positionClass: 'toast-top-left'
+                    });
+                    return;
+                }
+
+                
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/login',
+                    data: JSON.stringify({ username: username, password: password }),
+                    contentType: 'application/json',
+                    // on success show toast success for 5 seconds and then redirect to home page
+                    success: function(response) {
+                        toastr.success('Login successful!', 'Success', {
+                            timeOut: 5000, // 5 seconds
+                            progressBar: true,
+                            positionClass: 'toast-top-left'
+                        });
+                        setTimeout(function() {
+                            window.location.href = '/chat';
+                        }, 5000);
+                    },
+                    // check if 401 response code
+                }).fail(function() {
+                    toastr.error('Invalid credentials!', 'Error', {
+                        timeOut: 5000, // 5 seconds
+                        progressBar: true,
+                        positionClass: 'toast-top-left'
+                    });
+                });
+                // check if response code is 401
+                
+            });
+        });
+    </script>
+</body>
+</html>

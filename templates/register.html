@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Briem+Hand&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <title>Crush.AI - Register</title>
+    {{ toastr.include_jquery() }}
+    {{ toastr.include_toastr_css() }}
+    {{ toastr.message() }}
+    <style>
+        /* Add some basic styling to make it look fancy */
+        body {
+            font-family: Arial, sans-serif;
+            background: rgb(131,58,180);
+            background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(200,76,76,1) 50%, rgba(252,176,69,1) 100%);        
+        }
+        .container {
+            max-width: 400px;
+            margin: auto; /* Center horizontally */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: transparent;
+            border-radius: 20px;
+        }
+       .header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-family: 'Poetsen One', cursive;
+        }
+       .form-group {
+            margin-bottom: 20px;
+        }
+       .form-control {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+        }
+       .btn {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Briem Hand', cursive;
+        }
+       .btn:hover {
+            background-color: #3e8e41;
+        }
+        .flash {
+        padding: 20px;
+        margin: 20px;
+        }
+
+        .flash.error {
+        background-color: #ffa7ae;
+        color: #a02a36;
+        }
+
+        .flash.success {
+        background-color: #96faad;
+        color: #1c7530;
+        }
+        #register-form label{
+            font-family: 'Nunito', sans-serif;
+        }
+        #loginlink {
+            float: left;
+            /* gap it a bit from the password input */
+            margin-top: 10px;
+            font-size: 14px;
+            font-family: 'Nunito', sans-serif;
+        }
+        #login-btn {
+            margin: 40px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <p></p>
+    <div class="container">
+        <img src="https://res.cloudinary.com/de87yggc7/image/upload/v1715297145/epdl5yhozepi2xzlhuo9.png" alt="Crush.AI" style="display: block; margin: auto; margin-top: 0px; width: 300px;">
+        <div class="header" style="margin-top: -20px;">
+            Hello, there!
+        </div>
+      
+          {{ toastr.include_toastr_js() }}
+        
+        <form method="POST" id="register-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+                <a id="loginlink" href="/">Back to Login</a>
+            </div>
+            <button class="btn" id="login-btn" type="submit">Register</button>
+        </form>
+    </div>
+    <script>
+        // check if username and password are provided if not alert the user
+        document.querySelector('form').onsubmit = function(e) {
+            if (document.getElementById('username').value === '' || document.getElementById('password').value === '') {
+                toastr.error("Please fill out the form");
+                e.preventDefault();
+            }
+        }
+        // if everything is provided, alert user that they have successfully registered
+        if (window.location.search.includes('registered')) {
+            toastr.success('You have successfully registered!');
+        }
+    </script>
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+</body>
+</html>
